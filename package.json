@@ -9,15 +9,20 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.69.0",
+    "connectkit": "^1.8.2",
+    "next": "15.2.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "next": "15.2.3"
+    "viem": "^2.23.14",
+    "wagmi": "^2.14.15",
+    "wagmi-app": "file:"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
-    "tailwindcss": "^4",
     "eslint": "^9",
     "eslint-config-next": "15.2.3",
-    "@eslint/eslintrc": "^3"
+    "tailwindcss": "^4"
   }
 }
