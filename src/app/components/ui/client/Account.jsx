@@ -1,10 +1,10 @@
 "use client";
 
 import { useAccount } from "wagmi";
-import Text from "../common/text";
+import {Text} from "../";
 
-// Make sure that this component is wrapped with ConnectKitProvider
-const Account = () => {
+
+export const Account = () => {
   const { address, isConnecting, isDisconnected } = useAccount();
   if (isConnecting) return <Text variant='h3' color='secondary'>Connecting...</Text>;
   if (isDisconnected) return <Text  variant='h3' color='secondary'>Disconnected</Text>;
@@ -14,5 +14,3 @@ const Account = () => {
     </div>
   );
 };
-
-export default Account;

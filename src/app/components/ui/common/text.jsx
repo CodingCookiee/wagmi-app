@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const Text = ({
+export const Text = ({
   children,
   variant = 'body',
   color = 'default',
@@ -80,5 +80,3 @@ Text.propTypes = {
   className: PropTypes.string,
   as: PropTypes.elementType,
 };
-
-export default Text;

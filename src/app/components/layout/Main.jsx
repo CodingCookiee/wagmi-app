@@ -1,9 +1,7 @@
 "use client";
 
-import { Web3Provider } from "../Web3Provider";
 import { ConnectKitButton } from "connectkit";
-import Account from "./components/ui/client/Account";
-import Text from "./components/ui/common/text";
+import { Account, Text } from '../ui'
 
 
 import styled from "styled-components";
@@ -30,9 +28,9 @@ const StyledButton = styled.button`
   }
 `;
 
-export default function Home() {
+export default function Main() {
   return (
-    <Web3Provider>
+   
       <main className="w-full min-h-screen flex  flex-col items-center justify-center p-10 gap-10">
         <div className="max-w-5xl w-full flex items-center justify-center">
           <Text variant="h1" color="default">
@@ -55,6 +53,6 @@ export default function Home() {
         </div>
 
       </main>
-    </Web3Provider>
+   
   );
 }
