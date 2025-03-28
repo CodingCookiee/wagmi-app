@@ -1,18 +1,25 @@
 "use client";
 
 import { WagmiProvider, createConfig, http } from "wagmi";
-import { mainnet } from "wagmi/chains";
+import { mainnet, sepolia } from "wagmi/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ConnectKitProvider, getDefaultConfig } from "connectkit";
+
+// Get chain ID from environment variable or default to Sepolia
+const chainId = parseInt(process.env.NEXT_CHAIN_ID || "11155111");
+const activeChain = chainId === 1 ? mainnet : sepolia;
 
 const config = createConfig(
   getDefaultConfig({
     // Your dApps chains
-    chains: [mainnet],
+    chains: [activeChain],
     transports: {
       // RPC URL for each chain
       [mainnet.id]: http(
         `https://eth-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_ID}`
+      ),
+      [sepolia.id]: http(
+        process.env.NEXT_RPC_URL || "https://eth-sepolia.public.blastapi.io"
       ),
     },
 
@@ -38,14 +45,12 @@ export const Web3Provider = ({ children }) => {
         <ConnectKitProvider
           theme="rounded"
           mode='auto'
-          
           options={{
             embedGoogleFonts: true,
             walletConnectName:'WalletConnect',
             overlayBlur: 4,
             truncateLongENSAddress: true,
             walletConnectCTA: 'both',
-            
             disclaimer: (
               <>
                 By connecting your wallet you agree to the{" "}
