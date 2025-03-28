@@ -4,94 +4,115 @@ import abi from "../abi/abi.json";
 // get the contract address from Next.js environment variables
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS;
 
-// initialize contract with provider or signer
-export const initContract = async (providerOrSigner) => {
-  if (!CONTRACT_ADDRESS) {
-    throw new Error("Contract address is not defined in environment variables");
-  }
-
-  if (!providerOrSigner) {
-    throw new Error("Provider or signer is required");
-  }
-
-  return new ethers.Contract(CONTRACT_ADDRESS, abi, providerOrSigner);
-};
-
-// Read Functions: Read data from the contract
-export const getTokenName = async (provider) => {
-  const contract = await initContract(provider);
+// Read Functions: Read data from the contract using wagmi's publicClient
+export const getTokenName = async (publicClient) => {
   try {
-    return await contract.name();
+    const data = await publicClient.readContract({
+      address: CONTRACT_ADDRESS,
+      abi,
+      functionName: 'name',
+    });
+    return data;
   } catch (error) {
     console.error("Error reading token name: ", error);
     throw error;
   }
 };
 
-export const getTokenSymbol = async (provider) => {
-  const contract = await initContract(provider);
+export const getTokenSymbol = async (publicClient) => {
   try {
-    return await contract.symbol();
+    const data = await publicClient.readContract({
+      address: CONTRACT_ADDRESS,
+      abi,
+      functionName: 'symbol',
+    });
+    return data;
   } catch (error) {
     console.error("Error reading token symbol: ", error);
     throw error;
   }
 };
 
-export const getTokenDecimals = async (provider) => {
-  const contract = await initContract(provider);
+export const getTokenDecimals = async (publicClient) => {
   try {
-    return await contract.decimals();
+    const data = await publicClient.readContract({
+      address: CONTRACT_ADDRESS,
+      abi,
+      functionName: 'decimals',
+    });
+    return data;
   } catch (error) {
     console.error("Error reading token decimals: ", error);
     throw error;
   }
 };
 
-export const getBalance = async (provider, address) => {
+export const getBalance = async (publicClient, address) => {
   if (!address) {
     throw new Error("Address is required to get balance");
   }
-
-  const contract = await initContract(provider);
+  
   try {
-    return await contract.balanceOf(address);
+    const data = await publicClient.readContract({
+      address: CONTRACT_ADDRESS,
+      abi,
+      functionName: 'balanceOf',
+      args: [address],
+    });
+    return data;
   } catch (error) {
     console.error("Error reading balance: ", error);
     throw error;
   }
 };
 
-export const getTotalSupply = async (provider) => {
-  const contract = await initContract(provider);
+export const getTotalSupply = async (publicClient) => {
   try {
-    return await contract.totalSupply();
+    const data = await publicClient.readContract({
+      address: CONTRACT_ADDRESS,
+      abi,
+      functionName: 'totalSupply',
+    });
+    return data;
   } catch (error) {
     console.error("Error reading total supply: ", error);
     throw error;
   }
 };
 
-export const getOwner = async (provider) => {
-  const contract = await initContract(provider);
+export const getOwner = async (publicClient) => {
   try {
-    return await contract.getOwner();
+    const data = await publicClient.readContract({
+      address: CONTRACT_ADDRESS,
+      abi,
+      functionName: 'getOwner',
+    });
+    return data;
   } catch (error) {
     console.error("Error reading owner: ", error);
     throw error;
   }
 };
 
-export const getAllowance = async (provider, owner, spender) => {
+export const getAllowance = async (publicClient, owner, spender) => {
   if (!owner || !spender) {
     throw new Error("Owner and spender addresses are required");
   }
-
-  const contract = await initContract(provider);
+  
   try {
-    return await contract.allowance(owner, spender);
+    const data = await publicClient.readContract({
+      address: CONTRACT_ADDRESS,
+      abi,
+      functionName: 'allowance',
+      args: [owner, spender],
+    });
+    return data;
   } catch (error) {
     console.error("Error reading allowance: ", error);
     throw error;
   }
+};
+
+export {
+  CONTRACT_ADDRESS,
 };
