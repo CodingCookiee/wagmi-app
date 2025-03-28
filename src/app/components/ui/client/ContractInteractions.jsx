@@ -189,18 +189,18 @@ export const ContractInteractions = () => {
 
 
 // For pending transactions
-useEffect(() => {
-  if (isWritePending) {
-    toast.info("Processing Your Request ...");
-  }
-}, [isWritePending]);
+// useEffect(() => {
+//   if (isWritePending) {
+//     toast.info("Processing Your Request ...");
+//   }
+// }, [isWritePending]);
 
-// For confirming transactions
-useEffect(() => {
-  if (isConfirming) {
-    toast.warning("Waiting for Confirmation...");
-  }
-}, [isConfirming]);
+// // For confirming transactions
+// useEffect(() => {
+//   if (isConfirming) {
+//     toast.warning("Waiting for Confirmation...");
+//   }
+// }, [isConfirming]);
 
 // For confirmed transactions
 useEffect(() => {

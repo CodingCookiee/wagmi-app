@@ -7,4 +7,4 @@ export { Input } from './common/input.jsx';
 export { Divider } from './common/divider.jsx';
 export { Toaster } from './common/sonner.jsx';
 export { Loader } from './common/loader.jsx';
-export { TransactionStatusOverlay } from './client/TransactionStatusOverlay.jsx';
+export { TransactionStatusOverlay } from './common/TransactionStatusOverlay.jsx';
