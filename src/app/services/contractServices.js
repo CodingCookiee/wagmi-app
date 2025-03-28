@@ -1,4 +1,3 @@
-import { ethers } from "ethers";
 import abi from "../abi/abi.json";
 
 // get the contract address from Next.js environment variables
@@ -111,6 +110,84 @@ export const getAllowance = async (publicClient, owner, spender) => {
     console.error("Error reading allowance: ", error);
     throw error;
   }
+};
+
+// Write Functions: Write data to the contract using wagmi's writeContract
+export const mintTokens = async (writeContract, amount) => {
+  if (!amount) return new Error("Amount is required");
+
+  return writeContract({
+    address: CONTRACT_ADDRESS,
+    abi,
+    functionName: 'mint',
+    args: [amount],
+  });
+};
+
+export const burnTokens = async (writeContract, amount) => {
+  if (!amount) return new Error("Amount is required");
+
+  return writeContract({
+    address: CONTRACT_ADDRESS, 
+    abi,
+    functionName: 'burn',
+    args: [amount],
+  });
+};
+
+export const approve = async (writeContract, spender, amount) => {
+  if(!spender || !amount) return new Error("Spender and amount are required");
+
+  return writeContract({
+    address: CONTRACT_ADDRESS,
+    abi,
+    functionName: 'approve',
+    args: [spender, amount],
+  });
+};
+
+export const transferFrom = async (writeContract, sender, recipient, amount) => {
+  if(!sender || !recipient || !amount) return new Error("Sender, recipient, and amount are required");
+
+  return writeContract({
+    address: CONTRACT_ADDRESS,
+    abi,
+    functionName: 'transferFrom',
+    args: [sender, recipient, amount],
+  });
+};
+
+export const transfer = async (writeContract, recipient, amount) => {
+  if(!recipient || !amount) return new Error("Recipient and amount are required");
+  
+  return writeContract({
+    address: CONTRACT_ADDRESS,
+    abi,
+    functionName: 'transfer',
+    args: [recipient, amount],
+  });
+};
+
+export const increaseAllowance = async (writeContract, spender, addedValue) => {
+  if(!spender || !addedValue) return new Error("Spender and added value are required");
+  
+  return writeContract({
+    address: CONTRACT_ADDRESS,
+    abi,
+    functionName: 'increaseAllowance',
+    args: [spender, addedValue],
+  });
+};
+
+export const decreaseAllowance = async (writeContract, spender, subtractedValue) => {
+  if(!spender || !subtractedValue) return new Error("Spender and subtracted value are required");
+  
+  return writeContract({
+    address: CONTRACT_ADDRESS,
+    abi,
+    functionName: 'decreaseAllowance',
+    args: [spender, subtractedValue],
+  });
 };
 
 export {
