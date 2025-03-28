@@ -1,10 +1,9 @@
 "use client";
 
 import { ConnectKitButton } from "connectkit";
-import { Account, Text } from '../ui'
-
-
+import { Account, Text, ContractInteractions, NetworkSwitcher } from '../ui';;
 import styled from "styled-components";
+
 const StyledButton = styled.button`
   cursor: pointer;
   position: relative;
@@ -30,29 +29,34 @@ const StyledButton = styled.button`
 
 export default function Main() {
   return (
-   
-      <main className="w-full min-h-screen flex  flex-col items-center justify-center p-10 gap-10">
-        <div className="max-w-5xl w-full flex items-center justify-center">
-          <Text variant="h1" color="default">
-            Welcome to Wagmi App
-          </Text>
-        </div>
-        <div className="max-w-5xl w-full flex items-center justify-center">
+    <main className="w-full min-h-screen flex flex-col items-center justify-center p-10 gap-10">
+      <div className="max-w-5xl w-full flex items-center justify-center">
+        <Text variant="h1" color="default">
+          Welcome to Wagmi App
+        </Text>
+      </div>
+      <div className="max-w-5xl w-full flex items-center justify-center">
         <ConnectKitButton.Custom>
-      {({ isConnected, show, truncatedAddress, ensName }) => {
-        return (
-          <StyledButton onClick={show}>
-            {isConnected ? ensName ?? 'Disconnect' : "Connect Wallet"}
-          </StyledButton>
-        );
-      }}
-    </ConnectKitButton.Custom>
-        </div>
-        <div className="max-w-5xl w-full flex items-center justify-center">
+          {({ isConnected, show, truncatedAddress, ensName }) => {
+            return (
+              <StyledButton onClick={show}>
+                {isConnected ? ensName ?? truncatedAddress : "Connect Wallet"}
+              </StyledButton>
+            );
+          }}
+        </ConnectKitButton.Custom>
+      </div>
+      <div className="max-w-5xl w-full flex items-center justify-center">
         <Account />
-        </div>
-
-      </main>
-   
+      </div>
+      {/* Network Switcher component */}
+      <div className="max-w-5xl w-full flex items-center justify-center">
+        <NetworkSwitcher />
+      </div> 
+      {/* ContractInteraction component */}
+      <div className="max-w-5xl w-full h-full flex items-center justify-center">
+        <ContractInteractions />
+      </div>
+    </main>
   );
 }
