@@ -2,6 +2,7 @@ import React from "react";
 import { WriteContract } from "./WriteContract";
 import { ReadContract } from "./ReadContract";
 import {
+ BaseError,
   useAccount,
   usePublicClient,
   useWriteContract,
@@ -19,7 +20,7 @@ export const ContractInteractions2 = () => {
     writeContract,
     isPending: isWritePending,
     data: hash,
-    isWriteError: writeError,
+    error: writeError,
   } = useWriteContract();
   const {
     isLoading: isConfirming,
@@ -65,7 +66,7 @@ export const ContractInteractions2 = () => {
         publicClient={publicClient}
         data={hash}
         isPending={isWritePending}
-        isWriteError={writeError}
+        writeError={writeError}
         isLoading={isConfirming}
         isConfirmed={isConfirmed}
         isFailed={isFailed}
