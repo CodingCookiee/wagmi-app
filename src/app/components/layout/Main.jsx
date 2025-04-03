@@ -1,7 +1,15 @@
 "use client";
 
+import React, { useState, useEffect } from "react";
+import { useAccount } from "wagmi";
 import { ConnectKitButton } from "connectkit";
-import { Account, Text, ContractInteractions, ContractInteractions2, NetworkSwitcher } from '../ui';;
+import {
+  Account,
+  Text,
+  ContractInteractions,
+  ContractInteractions2,
+  NetworkSwitcher,
+} from "../ui";
 import styled from "styled-components";
 
 const StyledButton = styled.button`
@@ -28,6 +36,17 @@ const StyledButton = styled.button`
 `;
 
 export default function Main() {
+  const { address } = useAccount();
+  const [isConnected, setIsConnected] = useState(false);
+
+  useEffect(() => {
+    if (address) {
+      setIsConnected(true);
+    } else {
+      setIsConnected(false);
+    }
+  }, [address]);
+
   return (
     <main className="w-full min-h-screen flex flex-col items-center justify-center p-10 gap-10">
       <div className="max-w-5xl w-full flex items-center justify-center">
@@ -52,11 +71,13 @@ export default function Main() {
       {/* Network Switcher component */}
       <div className="max-w-5xl w-full flex items-center justify-center">
         <NetworkSwitcher />
-      </div> 
-      {/* ContractInteraction component */}
-      <div className="max-w-5xl w-full h-full flex items-center justify-center">
-        <ContractInteractions2 />
       </div>
+      {/* ContractInteraction component */}
+      {isConnected && (
+        <div className="max-w-5xl w-full h-full flex items-center justify-center">
+          <ContractInteractions2 />
+        </div>
+      )}
     </main>
   );
 }
