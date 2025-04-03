@@ -1,6 +1,6 @@
 import React from "react";
 import { useState, useEffect } from "react";
-import { Text, Button } from "../";
+import { Text, Button, Input } from "../";
 import {
   getTokenName,
   getTokenSymbol,
@@ -23,6 +23,11 @@ export const ReadContract = ({ chainId, address, publicClient }) => {
   const [balance, setBalance] = useState("");
   const [owner, setOwner] = useState("");
   const [allowance, setAllowance] = useState("");
+  const [isAllowanceSpender, setIsAllowanceSpender] = useState("");
+  const [isAllowanceOwner, setIsAllowanceOwner] = useState("");
+
+  //   Loading States for fetching data
+  const [isCheckingAllowance, setIsCheckingAllowance] = useState(false);
 
   const fetchTokenData = async () => {
     if (!publicClient || !address) return;
@@ -31,12 +36,12 @@ export const ReadContract = ({ chainId, address, publicClient }) => {
       // Get token name
       const tokenName = await getTokenName(publicClient);
       if (tokenName) setTokenName(tokenName);
-      console.log("Token Name: ", tokenName);
+      //   console.log("Token Name: ", tokenName);
 
       // get token decimals
       const tokenDecimals = await getTokenDecimals(publicClient);
       if (tokenDecimals !== undefined) setTokenDecimals(tokenDecimals);
-      console.log("Token Decimals: ", tokenDecimals);
+      //   console.log("Token Decimals: ", tokenDecimals);
 
       // get token symbol
       const tokenSymbol = await getTokenSymbol(publicClient);
@@ -85,19 +90,56 @@ export const ReadContract = ({ chainId, address, publicClient }) => {
       }
 
       // get allowance
-      try {
-        const allowance = await getAllowance(publicClient, owner, spender);
-        if (allowance) {
-          const formattedAllowance = formatUnits(allowance, tokenDecimals);
-          setAllowance(formattedAllowance);
-        }
-      } catch (error) {
-        console.error("Error getting allowance", error);
-        throw error;
-      }
+      //   try {
+      //     const allowance = await getAllowance(publicClient, owner, spender);
+      //     if (allowance) {
+      //       const formattedAllowance = formatUnits(allowance, tokenDecimals);
+      //       setAllowance(formattedAllowance);
+      //     }
+      //   } catch (error) {
+      //     console.error("Error getting allowance", error);
+      //     throw error;
+      //   }
     } catch (error) {
       console.error("Error fetching token data", error);
       setError("Failed to fetch token data");
+    }
+  };
+
+  const checkAllowance = async () => {
+    if (
+      !publicClient ||
+      !isAllowanceOwner ||
+      !isAllowanceSpender ||
+      !tokenDecimals
+    )
+      return;
+
+    try {
+      // console.log("About to call getAllowance with:", {
+      //   publicClient,
+      //   owner: isAllowanceOwner,
+      //   spender: isAllowanceSpender
+      // });
+
+      const allowanceValue = await getAllowance(
+        publicClient,
+        isAllowanceOwner,
+        isAllowanceSpender
+      );
+
+      // console.log("Allowance result:", allowanceValue);
+
+      if (allowanceValue !== undefined) {
+        const formatted = formatUnits(allowanceValue, tokenDecimals);
+        // console.log("Formatted allowance:", formatted);
+        setAllowance(formatted);
+      }
+    } catch (error) {
+      console.error("Error Checking Allowance", error);
+      setError("Failed to check allowance: " + error.message);
+    } finally {
+      setIsCheckingAllowance(false);
     }
   };
 
@@ -156,14 +198,43 @@ export const ReadContract = ({ chainId, address, publicClient }) => {
           </div>
 
           {/* Check Allowance Section */}
-          <div className="flex items-center justify-center gap-2">
+          <div className="flex flex-col items-start gap-2.5 mt-4 w-full">
             <Text variant="h5" weight="semibold">
-              Allowance:
+              Check Allowance:
             </Text>
-
-            <Text variant="body">
-              {allowance} {tokenSymbol}
-            </Text>
+            <Input
+              type="text"
+              placeholder="Owner address"
+              value={isAllowanceOwner}
+              onChange={(e) => setIsAllowanceOwner(e.target.value)}
+            />
+            <Input
+              type="text"
+              placeholder="Spender address"
+              value={isAllowanceSpender}
+              onChange={(e) => setIsAllowanceSpender(e.target.value)}
+            />
+            <div className="flex flex-col items-start justify-center w-full gap-2.5">
+              <Button
+                variant="default"
+                onClick={checkAllowance}
+                disabled={
+                  !isAllowanceOwner ||
+                  !isAllowanceSpender ||
+                  isCheckingAllowance
+                }
+              >
+                {isCheckingAllowance ? "Checking..." : "Check Allowance"}
+              </Button>
+              <div className="flex items-center justify-center gap-2.5">
+                <Text variant="h5" weight="semibold">
+                  Allowance:
+                </Text>
+                <Text variant="body">
+                  {allowance} {tokenSymbol}
+                </Text>
+              </div>
+            </div>
           </div>
         </div>
 
