@@ -11,18 +11,17 @@ import {
 } from "../../../services/contractServices2.js";
 import { Text, Button, Input, Divider, TransactionStatusOverlay } from "../";
 import { parseUnits, formatUnits } from "ethers";
-import { toast } from 'sonner'
+import { toast } from "sonner";
 
 export const WriteContract = ({
   chainId,
   address,
   writeContract,
   publicClient,
-  isConfirmed
+  isConfirmed,
 }) => {
   const [error, setError] = useState(null);
   const [tokenDecimals, setTokenDecimals] = useState(null);
-
 
   // Individual loading states for each operation
   const [isMinting, setIsMinting] = useState(false);
@@ -33,9 +32,9 @@ export const WriteContract = ({
   const [isIncreasingAllowance, setIsIncreasingAllowance] = useState(false);
   const [isCheckingAllowance, setIsCheckingAllowance] = useState(false);
 
-
   // States for Contract Interactions
   const [mintAmount, setMintAmount] = useState("");
+  const [burnAmount, setBurnAmount] = useState("");
 
   const fetchTokenData = async () => {
     if (!publicClient || !address) return;
@@ -57,35 +56,34 @@ export const WriteContract = ({
   }, [publicClient, address]);
 
   // For confirmed transactions
-useEffect(() => {
-  if (isConfirmed) {
-    toast.success("Hurrah! Transaction Confirmed.");
+  useEffect(() => {
+    if (isConfirmed) {
+      toast.success("Hurrah! Transaction Confirmed.");
 
-    setError(null);
-    
-    // Reset all operation states
-    setIsMinting(false);
-    setIsBurning(false);
-    setIsApproving(false);
-    setIsTransferring(false);
-    setIsTransferringFrom(false);
-    setIsIncreasingAllowance(false);
-  }
-}, [isConfirmed]);
+      setError(null);
 
-// For errors
-useEffect(() => {
-  if (error) {
-    toast.error(error);
-  }
-}, [error]);
+      // Reset all operation states
+      setIsMinting(false);
+      setIsBurning(false);
+      setIsApproving(false);
+      setIsTransferring(false);
+      setIsTransferringFrom(false);
+      setIsIncreasingAllowance(false);
+    }
+  }, [isConfirmed]);
 
+  // For errors
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+    }
+  }, [error]);
 
   const handleMint = async () => {
     if (!mintAmount || !tokenDecimals) return;
     try {
       setError(null);
-      // setIsMinting(true);
+      setIsMinting(true);
 
       const amountWei = parseUnits(mintAmount, tokenDecimals);
       await mintTokens(writeContract, amountWei);
@@ -93,9 +91,29 @@ useEffect(() => {
     } catch (error) {
       setError("Error minting tokens ");
       console.error("Error minting tokens: ", error);
-      // setIsMinting(false);
+      setIsMinting(false);
     }
   };
+
+
+  const handleBurn = async () => {
+    if(!burnAmount || !tokenDecimals) return;
+
+    try {
+      setError(null);
+      setIsBurning(true);
+
+      const amountWei = parseUnits(burnAmount, tokenDecimals);
+      await burnTokens(writeContract, amountWei);
+      setBurnAmount("");
+      
+    } catch (error) {
+      setError("Error burning tokens");
+      console.error("Error burning tokens: ", error);
+      setIsBurning(false);
+      
+    }
+  }
 
   return (
     <div className="w-full flex flex-col items-start justify-start  gap-4">
@@ -120,36 +138,34 @@ useEffect(() => {
             <Button
               variant="default"
               onClick={handleMint}
-              disabled={!mintAmount}
-            //   disabled={!mintAmount || isMinting}
+              disabled={!mintAmount || isMinting}
             >
-              {/* {isMinting ? "Processing..." : "Mint"} */}
-              Mint
+              {isMinting ? "Minting..." : "Mint"}
             </Button>
           </div>
 
           <Divider className="w-full h-1 bg-neutral-300" />
 
           {/* Burn Section */}
-          {/* <div className="flex flex-col items-start gap-2.5 w-full">
-      <Text variant="h4" weight="semibold" align="left">
-        Burn
-      </Text>
-      <Input
-        type="text"
-        required
-        value={burnAmount}
-        onChange={(e) => setBurnAmount(e.target.value)}
-        placeholder="Amount to burn"
-      />
-      <Button
-        variant="default"
-        onClick={handleBurn}
-        disabled={!burnAmount || isBurning}
-      >
-        {isBurning ? "Processing..." : "Burn"}
-      </Button>
-    </div> */}
+          <div className="flex flex-col items-start gap-2.5 w-full">
+            <Text variant="h4" weight="semibold" align="left">
+              Burn
+            </Text>
+            <Input
+              type="text"
+              required
+              value={burnAmount}
+              onChange={(e) => setBurnAmount(e.target.value)}
+              placeholder="Amount to burn"
+            />
+            <Button
+              variant="default"
+              onClick={handleBurn}
+              disabled={!burnAmount || isBurning}
+            >
+              {isBurning ? "Processing..." : "Burn"}
+            </Button>
+          </div>
 
           <Divider className="w-full h-1 bg-neutral-300" />
 
