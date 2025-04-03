@@ -16,6 +16,7 @@ export const ContractInteractions2 = () => {
   const { address } = useAccount();
   const publicClient = usePublicClient();
   const chainId = useChainId();
+  const baseError = new BaseError();
   const {
     writeContract,
     isPending: isWritePending,
