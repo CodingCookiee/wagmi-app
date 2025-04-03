@@ -42,6 +42,8 @@ export const WriteContract = ({
   const [transferFromRecipient, setTransferFromRecipient] = useState("");
   const [increaseAllowanceSpender, setIncreaseAllowanceSpender] = useState("");
   const [increaseAllowanceAmount, setIncreaseAllowanceAmount] = useState("");
+  const [transferAmount, setTransferAmount] = useState("");
+  const [transferRecipient, setTransferRecipient] = useState("");
 
   const fetchTokenData = async () => {
     if (!publicClient || !address) return;
@@ -187,6 +189,24 @@ export const WriteContract = ({
       setError("Error increasing allowance");
       console.error("Error increasing allowance: ", error);
       setIsIncreasingAllowance(false);
+    }
+  };
+
+  const handleTransfer = async () => {
+    if (!transferAmount || !transferRecipient || !tokenDecimals) return;
+
+    try {
+      setError(null);
+      setIsTransferring(true);
+
+      const amountWei = parseUnits(transferAmount, tokenDecimals);
+      await transferTokens(writeContract, transferRecipient, amountWei);
+      setTransferAmount("");
+      setTransferRecipient("");
+    } catch (error) {
+      setError("Error transferring tokens");
+      console.error("Error transferring tokens: ", error);
+      setIsTransferring(false);
     }
   };
 
@@ -351,32 +371,32 @@ export const WriteContract = ({
           <Divider className="w-full h-1 bg-neutral-300" />
 
           {/* Transfer Section */}
-          {/* <div className="flex flex-col items-start gap-2.5 w-full">
-      <Text variant="h4" weight="semibold" align="left">
-        Transfer
-      </Text>
-      <Input
-        type="text"
-        required
-        value={transferRecipient}
-        onChange={(e) => setTransferRecipient(e.target.value)}
-        placeholder="Recipient address"
-      />
-      <Input
-        type="text"
-        required
-        value={transferAmount}
-        onChange={(e) => setTransferAmount(e.target.value)}
-        placeholder="Amount"
-      />
-      <Button
-        variant="default"
-        onClick={handleTransfer}
-        disabled={!transferAmount || !transferRecipient || isTransferring}
-      >
-        {isTransferring ? "Processing..." : "Transfer"}
-      </Button>
-    </div> */}
+          <div className="flex flex-col items-start gap-2.5 w-full">
+            <Text variant="h4" weight="semibold" align="left">
+              Transfer
+            </Text>
+            <Input
+              type="text"
+              required
+              value={transferRecipient}
+              onChange={(e) => setTransferRecipient(e.target.value)}
+              placeholder="Recipient address"
+            />
+            <Input
+              type="text"
+              required
+              value={transferAmount}
+              onChange={(e) => setTransferAmount(e.target.value)}
+              placeholder="Amount"
+            />
+            <Button
+              variant="default"
+              onClick={handleTransfer}
+              disabled={!transferAmount || !transferRecipient || isTransferring}
+            >
+              {isTransferring ? "Processing..." : "Transfer"}
+            </Button>
+          </div>
 
           <Divider className="w-full h-1 bg-neutral-300" />
         </div>
