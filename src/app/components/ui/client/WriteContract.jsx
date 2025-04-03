@@ -35,6 +35,13 @@ export const WriteContract = ({
   // States for Contract Interactions
   const [mintAmount, setMintAmount] = useState("");
   const [burnAmount, setBurnAmount] = useState("");
+  const [approveAmount, setApproveAmount] = useState("");
+  const [approveSpender, setApproveSpender] = useState("");
+  const [transferFromAmount, setTransferFromAmount] = useState("");
+  const [transferFromSender, setTransferFromSender] = useState("");
+  const [transferFromRecipient, setTransferFromRecipient] = useState("");
+  const [increaseAllowanceSpender, setIncreaseAllowanceSpender] = useState("");
+  const [increaseAllowanceAmount, setIncreaseAllowanceAmount] = useState("");
 
   const fetchTokenData = async () => {
     if (!publicClient || !address) return;
@@ -95,9 +102,8 @@ export const WriteContract = ({
     }
   };
 
-
   const handleBurn = async () => {
-    if(!burnAmount || !tokenDecimals) return;
+    if (!burnAmount || !tokenDecimals) return;
 
     try {
       setError(null);
@@ -106,14 +112,83 @@ export const WriteContract = ({
       const amountWei = parseUnits(burnAmount, tokenDecimals);
       await burnTokens(writeContract, amountWei);
       setBurnAmount("");
-      
     } catch (error) {
       setError("Error burning tokens");
       console.error("Error burning tokens: ", error);
       setIsBurning(false);
-      
     }
-  }
+  };
+
+  const handleApprove = async () => {
+    if (!approveAmount || !approveSpender || !tokenDecimals) return;
+
+    try {
+      setError(null);
+      setIsApproving(true);
+
+      const amountWei = parseUnits(approveAmount, tokenDecimals);
+      await approveTokens(writeContract, approveSpender, amountWei);
+      setApproveAmount("");
+      setApproveSpender("");
+    } catch (error) {
+      setError("Error approving tokens");
+      console.error("Error approving tokens: ", error);
+      setIsApproving(false);
+    }
+  };
+
+  const handleTransferFrom = async () => {
+    if (
+      !transferFromAmount ||
+      !transferFromRecipient ||
+      !transferFromSender ||
+      !tokenDecimals
+    )
+      return;
+
+    try {
+      setError(null);
+      setIsTransferringFrom(true);
+
+      const amountWei = parseUnits(transferFromAmount, tokenDecimals);
+      await transferFrom(
+        writeContract,
+        transferFromSender,
+        transferFromRecipient,
+        amountWei
+      );
+      setTransferFromAmount("");
+      setTransferFromSender("");
+      setTransferFromRecipient("");
+    } catch (error) {
+      setError("Error transferring tokens from");
+      console.error("Error transferring tokens from", error);
+      setIsTransferringFrom(false);
+    }
+  };
+
+  const handleIncreaseAllowance = async () => {
+    if (!increaseAllowanceAmount || !increaseAllowanceSpender || !tokenDecimals)
+      return;
+
+    try {
+      setError(null);
+      setIsIncreasingAllowance(true);
+
+      const amountWei = parseUnits(increaseAllowanceAmount, tokenDecimals);
+      await increaseAllowance(
+        writeContract,
+        increaseAllowanceSpender,
+        amountWei
+      );
+      setIncreaseAllowanceAmount("");
+      setIncreaseAllowanceSpender("");
+    } catch (error) {
+      setError("Error increasing allowance");
+      console.error("Error increasing allowance: ", error);
+      setIsIncreasingAllowance(false);
+    }
+  };
 
   return (
     <div className="w-full flex flex-col items-start justify-start  gap-4">
@@ -163,115 +238,115 @@ export const WriteContract = ({
               onClick={handleBurn}
               disabled={!burnAmount || isBurning}
             >
-              {isBurning ? "Processing..." : "Burn"}
+              {isBurning ? "Burning..." : "Burn"}
             </Button>
           </div>
 
           <Divider className="w-full h-1 bg-neutral-300" />
 
           {/* Approve Section */}
-          {/* <div className="flex flex-col items-start gap-2.5 w-full">
-      <Text variant="h4" weight="semibold" align="left">
-        Approve
-      </Text>
-      <Input
-        type="text"
-        required
-        value={approveSpender}
-        onChange={(e) => setApproveSpender(e.target.value)}
-        placeholder="Spender address"
-      />
-      <Input
-        type="text"
-        required
-        value={approveAmount}
-        onChange={(e) => setApproveAmount(e.target.value)}
-        placeholder="Amount to approve"
-      />
-      <Button
-        variant="default"
-        onClick={handleApprove}
-        disabled={!approveAmount || !approveSpender || isApproving}
-      >
-        {isApproving ? "Processing..." : "Approve"}
-      </Button>
-    </div> */}
+          <div className="flex flex-col items-start gap-2.5 w-full">
+            <Text variant="h4" weight="semibold" align="left">
+              Approve
+            </Text>
+            <Input
+              type="text"
+              required
+              value={approveSpender}
+              onChange={(e) => setApproveSpender(e.target.value)}
+              placeholder="Spender address"
+            />
+            <Input
+              type="text"
+              required
+              value={approveAmount}
+              onChange={(e) => setApproveAmount(e.target.value)}
+              placeholder="Amount to approve"
+            />
+            <Button
+              variant="default"
+              onClick={handleApprove}
+              disabled={!approveAmount || !approveSpender || isApproving}
+            >
+              {isApproving ? "Approving..." : "Approve"}
+            </Button>
+          </div>
 
           <Divider className="w-full h-1 bg-neutral-300" />
 
           {/* Transfer From Section */}
-          {/* <div className="flex flex-col items-start gap-2.5 w-full">
-      <Text variant="h4" weight="semibold" align="left">
-        Transfer From
-      </Text>
-      <Input
-        type="text"
-        required
-        value={transferFromSender}
-        onChange={(e) => setTransferFromSender(e.target.value)}
-        placeholder="Sender address"
-      />
-      <Input
-        type="text"
-        required
-        value={transferFromRecipient}
-        onChange={(e) => setTransferFromRecipient(e.target.value)}
-        placeholder="Recipient address"
-      />
-      <Input
-        type="text"
-        required
-        value={transferFromAmount}
-        onChange={(e) => setTransferFromAmount(e.target.value)}
-        placeholder="Amount"
-      />
-      <Button
-        variant="default"
-        onClick={handleTransferFrom}
-        disabled={
-          !transferFromAmount ||
-          !transferFromSender ||
-          !transferFromRecipient ||
-          isTransferringFrom
-        }
-      >
-        {isTransferringFrom ? "Processing..." : "Transfer From"}
-      </Button>
-    </div> */}
+          <div className="flex flex-col items-start gap-2.5 w-full">
+            <Text variant="h4" weight="semibold" align="left">
+              Transfer From
+            </Text>
+            <Input
+              type="text"
+              required
+              value={transferFromSender}
+              onChange={(e) => setTransferFromSender(e.target.value)}
+              placeholder="Sender address"
+            />
+            <Input
+              type="text"
+              required
+              value={transferFromRecipient}
+              onChange={(e) => setTransferFromRecipient(e.target.value)}
+              placeholder="Recipient address"
+            />
+            <Input
+              type="text"
+              required
+              value={transferFromAmount}
+              onChange={(e) => setTransferFromAmount(e.target.value)}
+              placeholder="Amount"
+            />
+            <Button
+              variant="default"
+              onClick={handleTransferFrom}
+              disabled={
+                !transferFromAmount ||
+                !transferFromSender ||
+                !transferFromRecipient ||
+                isTransferringFrom
+              }
+            >
+              {isTransferringFrom ? "Transferring..." : "Transfer From"}
+            </Button>
+          </div>
 
           <Divider className="w-full h-1 bg-neutral-300" />
 
           {/* Increase Allowance Section */}
-          {/* <div className="flex flex-col items-start gap-2.5 w-full">
-      <Text variant="h4" weight="semibold" align="left">
-        Increase Allowance
-      </Text>
-      <Input
-        type="text"
-        required
-        value={increaseAllowanceSpender}
-        onChange={(e) => setIncreaseAllowanceSpender(e.target.value)}
-        placeholder="Spender address"
-      />
-      <Input
-        type="text"
-        required
-        value={increaseAllowanceAmount}
-        onChange={(e) => setIncreaseAllowanceAmount(e.target.value)}
-        placeholder="Amount to add"
-      />
-      <Button
-        variant="default"
-        onClick={handleIncreaseAllowance}
-        disabled={
-          !increaseAllowanceAmount ||
-          !increaseAllowanceSpender ||
-          isIncreasingAllowance
-        }
-      >
-        {isIncreasingAllowance ? "Processing..." : "Increase Allowance"}
-      </Button>
-    </div> */}
+          <div className="flex flex-col items-start gap-2.5 w-full">
+            <Text variant="h4" weight="semibold" align="left">
+              Increase Allowance
+            </Text>
+            <Input
+              type="text"
+              required
+              value={increaseAllowanceSpender}
+              onChange={(e) => setIncreaseAllowanceSpender(e.target.value)}
+              placeholder="Spender address"
+            />
+            <Input
+              type="text"
+              required
+              value={increaseAllowanceAmount}
+              onChange={(e) => setIncreaseAllowanceAmount(e.target.value)}
+              placeholder="Amount to add"
+            />
+            <Button
+              variant="default"
+              onClick={handleIncreaseAllowance}
+              disabled={
+                !increaseAllowanceAmount ||
+                !increaseAllowanceSpender ||
+                isIncreasingAllowance
+              }
+            >
+              {isIncreasingAllowance ? "Processing..." : "Increase Allowance"}
+            </Button>
+          </div>
 
           <Divider className="w-full h-1 bg-neutral-300" />
 

@@ -128,11 +128,11 @@ export const ReadContract = ({ chainId, address, publicClient, isConfirmed }) =>
         isAllowanceSpender
       );
 
-      // console.log("Allowance result:", allowanceValue);
+      console.log("Allowance result:", allowanceValue);
 
       if (allowanceValue !== undefined) {
         const formatted = formatUnits(allowanceValue, tokenDecimals);
-        // console.log("Formatted allowance:", formatted);
+        console.log("Formatted allowance:", formatted);
         setAllowance(formatted);
       }
     } catch (error) {
