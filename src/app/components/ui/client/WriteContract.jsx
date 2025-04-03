@@ -91,18 +91,18 @@ export const WriteContract = ({
   // For errors
   useEffect(() => {
     if (writeError) {
-      toast.error("Transaction Error:", writeError.message);
+      toast.error("Transaction was rejected by the user");
       console.error("Error handling transaction status: ", writeError);
 
-       // Reset all operation states regardless of success or failure
-    setError(null);
-    setIsMinting(false);
-    setIsBurning(false);
-    setIsApproving(false);
-    setIsTransferring(false);
-    setIsTransferringFrom(false);
-    setIsIncreasingAllowance(false);
-    setIsDecreasingAllowance(false);
+      // Reset all operation states regardless of success or failure
+      setError(null);
+      setIsMinting(false);
+      setIsBurning(false);
+      setIsApproving(false);
+      setIsTransferring(false);
+      setIsTransferringFrom(false);
+      setIsIncreasingAllowance(false);
+      setIsDecreasingAllowance(false);
     }
   }, [writeError]);
 

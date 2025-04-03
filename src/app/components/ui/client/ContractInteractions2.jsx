@@ -2,7 +2,7 @@ import React from "react";
 import { WriteContract } from "./WriteContract";
 import { ReadContract } from "./ReadContract";
 import {
- BaseError,
+  BaseError,
   useAccount,
   usePublicClient,
   useWriteContract,
