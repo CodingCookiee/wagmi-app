@@ -1,7 +1,7 @@
 "use client";
 
 import { ConnectKitButton } from "connectkit";
-import { Account, Text, ContractInteractions, NetworkSwitcher } from '../ui';;
+import { Account, Text, ContractInteractions, ContractInteractions2, NetworkSwitcher } from '../ui';;
 import styled from "styled-components";
 
 const StyledButton = styled.button`
@@ -55,7 +55,7 @@ export default function Main() {
       </div> 
       {/* ContractInteraction component */}
       <div className="max-w-5xl w-full h-full flex items-center justify-center">
-        <ContractInteractions />
+        <ContractInteractions2 />
       </div>
     </main>
   );
