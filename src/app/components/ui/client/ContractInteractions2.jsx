@@ -51,10 +51,21 @@ export const ContractInteractions2 = () => {
         chainId={chainId}
         address={address}
         publicClient={publicClient}
+        isConfirmed={isConfirmed}
       
       />
       <Divider className="w-full h-1 bg-neutral-300" />
-      <WriteContract />
+      <WriteContract 
+        chainId={chainId}
+        address={address}
+        writeContract={writeContract}
+        publicClient={publicClient}
+        data={hash}
+        isPending= {isWritePending}
+        isLoading={isConfirming}
+        isConfirmed={isConfirmed} 
+    
+      />
     </div>
   );
 };

@@ -12,7 +12,7 @@ import {
 } from "../../../services/contractServices2.js";
 import { parseUnits, formatUnits } from "ethers";
 
-export const ReadContract = ({ chainId, address, publicClient }) => {
+export const ReadContract = ({ chainId, address, publicClient, isConfirmed }) => {
   const [error, setError] = useState(null);
 
   // State for storing fetched data
@@ -147,6 +147,16 @@ export const ReadContract = ({ chainId, address, publicClient }) => {
   useEffect(() => {
     fetchTokenData();
   }, [publicClient, address]);
+
+  // For confirmed transactions
+useEffect(() => {
+  if (isConfirmed) {
+    // Keep your existing code for resetting states
+    fetchTokenData();
+    setError(null);
+  
+  }
+}, [isConfirmed]);
 
   return (
     <div className="w-full h-full">
