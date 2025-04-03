@@ -19,6 +19,7 @@ export const WriteContract = ({
   writeContract,
   publicClient,
   isConfirmed,
+  isError,
 }) => {
   const [error, setError] = useState(null);
   const [tokenDecimals, setTokenDecimals] = useState(null);
@@ -30,6 +31,7 @@ export const WriteContract = ({
   const [isTransferring, setIsTransferring] = useState(false);
   const [isTransferringFrom, setIsTransferringFrom] = useState(false);
   const [isIncreasingAllowance, setIsIncreasingAllowance] = useState(false);
+  const [isDecreasingAllowance, setIsDecreasingAllowance] = useState(false);
   const [isCheckingAllowance, setIsCheckingAllowance] = useState(false);
 
   // States for Contract Interactions
@@ -44,6 +46,8 @@ export const WriteContract = ({
   const [increaseAllowanceAmount, setIncreaseAllowanceAmount] = useState("");
   const [transferAmount, setTransferAmount] = useState("");
   const [transferRecipient, setTransferRecipient] = useState("");
+  const [decreaseAllowanceSpender, setDecreaseAllowanceSpender] = useState("");
+  const [decreaseAllowanceAmount, setDecreaseAllowanceAmount] = useState("");
 
   const fetchTokenData = async () => {
     if (!publicClient || !address) return;
@@ -78,6 +82,7 @@ export const WriteContract = ({
       setIsTransferring(false);
       setIsTransferringFrom(false);
       setIsIncreasingAllowance(false);
+      setIsDecreasingAllowance(false);
     }
   }, [isConfirmed]);
 
@@ -207,6 +212,29 @@ export const WriteContract = ({
       setError("Error transferring tokens");
       console.error("Error transferring tokens: ", error);
       setIsTransferring(false);
+    }
+  };
+
+  const handleDecreaseAllowance = async (params) => {
+    if (!decreaseAllowanceAmount || !decreaseAllowanceSpender || !tokenDecimals)
+      return;
+
+    try {
+      setError(null);
+      setIsDecreasingAllowance(true);
+
+      const amountWei = parseUnits(decreaseAllowanceAmount, tokenDecimals);
+      await decreaseAllowance(
+        writeContract,
+        decreaseAllowanceSpender,
+        amountWei
+      );
+      setDecreaseAllowanceAmount("");
+      setDecreaseAllowanceSpender("");
+    } catch (error) {
+      setError("Error decreasing allowance");
+      console.error("Error decreasing allowance: ", error);
+      setIsDecreasingAllowance(false);
     }
   };
 
@@ -365,6 +393,40 @@ export const WriteContract = ({
               }
             >
               {isIncreasingAllowance ? "Processing..." : "Increase Allowance"}
+            </Button>
+          </div>
+
+          <Divider className="w-full h-1 bg-neutral-300" />
+
+          {/* decrease Allowance Section */}
+          <div className="flex flex-col items-start gap-2.5 w-full">
+            <Text variant="h4" weight="semibold" align="left">
+              Decrease Allowance
+            </Text>
+            <Input
+              type="text"
+              required
+              value={decreaseAllowanceSpender}
+              onChange={(e) => setDecreaseAllowanceSpender(e.target.value)}
+              placeholder="Spender address"
+            />
+            <Input
+              type="text"
+              required
+              value={decreaseAllowanceAmount}
+              onChange={(e) => setDecreaseAllowanceAmount(e.target.value)}
+              placeholder="Amount to Subtract"
+            />
+            <Button
+              variant="default"
+              onClick={handleDecreaseAllowance}
+              disabled={
+                !decreaseAllowance ||
+                !decreaseAllowanceSpender ||
+                isDecreasingAllowance
+              }
+            >
+              {isDecreasingAllowance ? "Processing..." : "Decrease Allowance"}
             </Button>
           </div>
 

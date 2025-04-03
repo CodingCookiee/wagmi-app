@@ -21,7 +21,7 @@ export const ContractInteractions2 = () => {
         isPending: isWritePending,
         data: hash,
     } = useWriteContract();
-    const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
+    const { isLoading: isConfirming, isSuccess: isConfirmed, isError: isFailed } = useWaitForTransactionReceipt({ hash });
 
 
   return (
@@ -64,6 +64,7 @@ export const ContractInteractions2 = () => {
         isPending= {isWritePending}
         isLoading={isConfirming}
         isConfirmed={isConfirmed} 
+        isError={isFailed}
     
       />
     </div>
