@@ -19,7 +19,8 @@ export const WriteContract = ({
   writeContract,
   publicClient,
   isConfirmed,
-  isError,
+  isFailed,
+  isWriteError,
 }) => {
   const [error, setError] = useState(null);
   const [tokenDecimals, setTokenDecimals] = useState(null);
@@ -68,30 +69,32 @@ export const WriteContract = ({
     fetchTokenData();
   }, [publicClient, address]);
 
-  // For confirmed transactions
+  //  handles transaction status changes
   useEffect(() => {
     if (isConfirmed) {
       toast.success("Hurrah! Transaction Confirmed.");
-
-      setError(null);
-
-      // Reset all operation states
-      setIsMinting(false);
-      setIsBurning(false);
-      setIsApproving(false);
-      setIsTransferring(false);
-      setIsTransferringFrom(false);
-      setIsIncreasingAllowance(false);
-      setIsDecreasingAllowance(false);
+    } else if (isFailed) {
+      toast.error("Transaction Failed. Please try again.");
     }
-  }, [isConfirmed]);
+
+    // Reset all operation states regardless of success or failure
+    setError(null);
+    setIsMinting(false);
+    setIsBurning(false);
+    setIsApproving(false);
+    setIsTransferring(false);
+    setIsTransferringFrom(false);
+    setIsIncreasingAllowance(false);
+    setIsDecreasingAllowance(false);
+  }, [isConfirmed, isFailed]);
 
   // For errors
   useEffect(() => {
-    if (error) {
-      toast.error(error);
+    if (isWriteError) {
+      toast.error("Transaction Error ");
+      console.error("Error handling transaction status: ", isWriteError);
     }
-  }, [error]);
+  }, [isWriteError]);
 
   const handleMint = async () => {
     if (!mintAmount || !tokenDecimals) return;

@@ -12,17 +12,20 @@ import { Text, Button, Input, Divider, TransactionStatusOverlay } from "../";
 import { toast } from "sonner";
 
 export const ContractInteractions2 = () => {
-
-    const { address } = useAccount();
-    const publicClient = usePublicClient();
-    const chainId = useChainId();
-    const {
-        writeContract,
-        isPending: isWritePending,
-        data: hash,
-    } = useWriteContract();
-    const { isLoading: isConfirming, isSuccess: isConfirmed, isError: isFailed } = useWaitForTransactionReceipt({ hash });
-
+  const { address } = useAccount();
+  const publicClient = usePublicClient();
+  const chainId = useChainId();
+  const {
+    writeContract,
+    isPending: isWritePending,
+    data: hash,
+    isWriteError: writeError,
+  } = useWriteContract();
+  const {
+    isLoading: isConfirming,
+    isSuccess: isConfirmed,
+    isError: isFailed,
+  } = useWaitForTransactionReceipt({ hash });
 
   return (
     <div className="w-full h-full min-h-max flex flex-col items-center justify-center border border-neutral-600 rounded-md py-10">
@@ -45,27 +48,27 @@ export const ContractInteractions2 = () => {
         isWritePending={isWritePending}
         isConfirming={isConfirming}
         isConfirmed={isConfirmed}
+        isFailed={isFailed}
       />
 
-      <ReadContract 
+      <ReadContract
         chainId={chainId}
         address={address}
         publicClient={publicClient}
         isConfirmed={isConfirmed}
-      
       />
       <Divider className="w-full h-1 bg-neutral-300" />
-      <WriteContract 
+      <WriteContract
         chainId={chainId}
         address={address}
         writeContract={writeContract}
         publicClient={publicClient}
         data={hash}
-        isPending= {isWritePending}
+        isPending={isWritePending}
+        isWriteError={writeError}
         isLoading={isConfirming}
-        isConfirmed={isConfirmed} 
-        isError={isFailed}
-    
+        isConfirmed={isConfirmed}
+        isFailed={isFailed}
       />
     </div>
   );
